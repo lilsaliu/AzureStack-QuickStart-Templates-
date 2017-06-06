@@ -25,16 +25,17 @@ Follow the below links to create/download a Linux Image and upload the same to A
 
 ``` PowerShell
 ## Configure the environment with the Add-AzureRmEnvironment cmdlt
-$endptOut = Invoke-RestMethod "$("https://api.$env:USERDNSDOMAIN".ToLowerInvariant())/metadata/endpoints?api-version=1.0"
+$externalDomain = "local.azurestack.external"
+$endptOut = Invoke-RestMethod "$("https://adminmanagement.$externalDomain".ToLowerInvariant())/metadata/endpoints?api-version=1.0"
 $envName = "AzureStackCloud"
 Add-AzureRmEnvironment -Name ($envName) `
 	                -ActiveDirectoryEndpoint ($ActiveDirectoryEndpoint = $($endptOut.authentication.loginEndpoint) + $($endptOut.authentication.audiences[0]).Split("/")[-1] + "/") `
 	                -ActiveDirectoryServiceEndpointResourceId ($ActiveDirectoryServiceEndpointResourceId = $($endptOut.authentication.audiences[0])) `
-	                -ResourceManagerEndpoint ($ResourceManagerEndpoint = $("https://api.$env:USERDNSDOMAIN".ToLowerInvariant())) `
+	                -ResourceManagerEndpoint ($ResourceManagerEndpoint = $("https://adminmanagement.$externalDomain".ToLowerInvariant())) `
 	                -GalleryEndpoint ($GalleryEndpoint = $endptOut.galleryEndpoint) `
 	                -GraphEndpoint ($GraphEndpoint = $endptOut.graphEndpoint) `
-	               -StorageEndpointSuffix ($StorageEndpointSuffix="$($env:USERDNSDOMAIN)".ToLowerInvariant()) `
-	               -AzureKeyVaultDnsSuffix ($AzureKeyVaultDnsSuffix="vault.$($env:USERDNSDOMAIN)".ToLowerInvariant()) 
+	               -StorageEndpointSuffix ($StorageEndpointSuffix="$($externalDomain)".ToLowerInvariant()) `
+	               -AzureKeyVaultDnsSuffix ($AzureKeyVaultDnsSuffix="vault.$($externalDomain)".ToLowerInvariant()) 
 ## Authenticate a user to the environment 
     $AADUserName = "Enter_AADUserName"
 	$AADUserPassword="Enter_AADUserPassword"
